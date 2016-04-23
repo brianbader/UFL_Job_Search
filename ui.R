@@ -3,7 +3,7 @@ library(DT)
 
 
 shinyUI(list(basicPage(
-    h2('The UFL jobs data'),
+    h2('University of Florida Statistics Jobs Board'),
     dataTableOutput('mytable')
   )))
 

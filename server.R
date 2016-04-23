@@ -12,7 +12,6 @@ matchRows <- function(x.1, x.2, ...) {
 jobs.stored <- read.csv(file = "https://raw.githubusercontent.com/geekman1/UFL_Job_Search/master/jobs.csv", header = TRUE)[, -1]
 colnames(jobs.stored) <- c("University/Company", "Position Title", "Date", "Link")
 
-
 ## Check against main page first
 main.page <- html("http://www.stat.ufl.edu/jobs/")
 
@@ -37,6 +36,7 @@ links.main <- main.page %>%
 jobs.temp <- cbind.data.frame(t(matrix(links.main, nrow = 3)), paste("http://www.stat.ufl.edu/jobs/", urls.main, sep = ""))
 colnames(jobs.temp) <- c("University/Company", "Position Title", "Date", "Link")
 
+## Check if there are any new listings
 newListings <- matchRows(jobs.temp, jobs.stored)
 jobs <- rbind.data.frame(newListings, jobs.stored)
 
@@ -59,7 +59,7 @@ while((nrow(newListings) > 0) & (i <= max(pagenums))) {
   colnames(jobs.temp) <- names(jobs)
   
   newListings <- matchRows(jobs.temp, jobs.stored)
-  jobs <- rbind.data.frame(newListings, jobs.stored)
+  jobs <- rbind.data.frame(newListings, jobs)
   
   i <- i + 1
 }
@@ -68,7 +68,6 @@ while((nrow(newListings) > 0) & (i <= max(pagenums))) {
 
 shinyServer(function(input, output) {
 
-  # sorted columns are colored now because CSS are attached to them
   output$mytable = renderDataTable({
     jobs
   }, options = list(orderClasses = TRUE))
