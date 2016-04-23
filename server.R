@@ -1,5 +1,6 @@
 library(shiny)
 library(rvest)
+library(RCurl)
 
 ## Function to find rows in dataframe 1 not in dataframe 2
 matchRows <- function(x.1, x.2, ...) {
@@ -9,7 +10,9 @@ matchRows <- function(x.1, x.2, ...) {
 }
 
 ## Read in from github (can change this to local file)
-jobs.stored <- read.csv(file = "https://raw.githubusercontent.com/geekman1/UFL_Job_Search/master/jobs.csv", header = TRUE)[, -1]
+
+x <- getURL("https://raw.githubusercontent.com/geekman1/UFL_Job_Search/master/jobs.csv")
+jobs.stored <- read.csv(text = x, header = TRUE)[, -1]
 colnames(jobs.stored) <- c("University/Company", "Position Title", "Date", "Link")
 
 ## Check against main page first
