@@ -9,7 +9,7 @@ matchRows <- function(x.1, x.2, ...) {
 }
 
 ## Read in from github (can change this to local file)
-jobs.stored <- read.csv(file = "C:/Users/Beatrice/Desktop/jobs.csv", header = TRUE)[, -1]
+jobs.stored <- read.csv(file = "https://raw.githubusercontent.com/geekman1/UFL_Job_Search/master/jobs.csv", header = TRUE)[, -1]
 colnames(jobs.stored) <- c("University/Company", "Position Title", "Date", "Link")
 
 
