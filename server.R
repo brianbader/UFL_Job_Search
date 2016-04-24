@@ -1,6 +1,7 @@
 library(shiny)
 library(rvest)
 library(RCurl)
+library(DT)
 
 ## Function to find rows in dataframe 1 not in dataframe 2
 matchRows <- function(x.1, x.2, ...) {
@@ -74,7 +75,7 @@ while((nrow(newListings) > 0) & (i <= max(pagenums))) {
 shinyServer(function(input, output) {
 
   output$mytable = renderDataTable({
-    jobs
+    datatable(jobs, escape = FALSE)
   }, options = list(orderClasses = TRUE))
   
 })
