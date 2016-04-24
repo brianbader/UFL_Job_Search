@@ -39,7 +39,8 @@ links.main <- main.page %>%
 ## Make table from main page
 jobs.temp <- as.data.frame(t(matrix(links.main, nrow = 3)))
 colnames(jobs.temp) <- c("University/Company", "Position Title", "Date")
-jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.main, '">', jobs.temp$`University/Company`, '</a>', sep = "")
+jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.main, 
+                                        '" target="_blank">', jobs.temp$`University/Company`, '</a>', sep = "")
 
 ## Check if there are any new listings
 newListings <- matchRows(jobs.temp, jobs.stored)
@@ -62,7 +63,8 @@ while((nrow(newListings) > 0) & (i <= max(pagenums))) {
   
   jobs.temp <- as.data.frame(t(matrix(links.temp, nrow = 3)))
   colnames(jobs.temp) <- colnames(jobs)
-  jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.temp, '">', jobs.temp$`University/Company`, '</a>', sep = "")
+  jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.temp, 
+                                          '" target="_blank">', jobs.temp$`University/Company`, '</a>', sep = "")
   
   newListings <- matchRows(jobs.temp, jobs.stored)
   jobs <- rbind.data.frame(newListings, jobs)
