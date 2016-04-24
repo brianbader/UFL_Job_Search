@@ -30,8 +30,9 @@ links.main <- main.page %>%
   html_text()
 
 ## Make table from main page
-jobs <- cbind.data.frame(t(matrix(links.main, nrow = 3)), paste("http://www.stat.ufl.edu/jobs/", urls.main, sep = ""))
-colnames(jobs) <- c("University/Company", "Position Title", "Date", "Link")
+jobs <- as.data.frame(t(matrix(links.main, nrow = 3)))
+colnames(jobs) <- c("University/Company", "Position Title", "Date")
+jobs$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.main, '">', jobs$`University/Company`, '</a>', sep = "")
 
 for(i in 2:max(pagenums)) {
 
@@ -47,11 +48,11 @@ for(i in 2:max(pagenums)) {
     html_nodes(".joblist tr td") %>%
     html_text()
 
-  jobs.temp <- cbind.data.frame(t(matrix(links.temp, nrow = 3)), paste("http://www.stat.ufl.edu/jobs/", urls.temp, sep = ""))
+  jobs.temp <- as.data.frame(t(matrix(links.temp, nrow = 3)))
   colnames(jobs.temp) <- names(jobs)
+  jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.temp, '">', jobs.temp$`University/Company`, '</a>', sep = "")
   jobs <- rbind.data.frame(jobs, jobs.temp)
 
 }
 
-head(jobs)
-
+datatable(jobs, escape = FALSE)

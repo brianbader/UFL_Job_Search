@@ -13,7 +13,7 @@ matchRows <- function(x.1, x.2, ...) {
 
 x <- getURL("https://raw.githubusercontent.com/geekman1/UFL_Job_Search/master/jobs.csv")
 jobs.stored <- read.csv(text = x, header = TRUE)[, -1]
-colnames(jobs.stored) <- c("University/Company", "Position Title", "Date", "Link")
+colnames(jobs.stored) <- c("University/Company", "Position Title", "Date")
 
 ## Check against main page first
 main.page <- html("http://www.stat.ufl.edu/jobs/")
@@ -36,8 +36,9 @@ links.main <- main.page %>%
   html_text()
 
 ## Make table from main page
-jobs.temp <- cbind.data.frame(t(matrix(links.main, nrow = 3)), paste("http://www.stat.ufl.edu/jobs/", urls.main, sep = ""))
-colnames(jobs.temp) <- c("University/Company", "Position Title", "Date", "Link")
+jobs.temp <- as.data.frame(t(matrix(links.main, nrow = 3)))
+colnames(jobs.temp) <- c("University/Company", "Position Title", "Date")
+jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.main, '">', jobs.temp$`University/Company`, '</a>', sep = "")
 
 ## Check if there are any new listings
 newListings <- matchRows(jobs.temp, jobs.stored)
@@ -58,8 +59,9 @@ while((nrow(newListings) > 0) & (i <= max(pagenums))) {
     html_nodes(".joblist tr td") %>%
     html_text()
   
-  jobs.temp <- cbind.data.frame(t(matrix(links.temp, nrow = 3)), paste("http://www.stat.ufl.edu/jobs/", urls.temp, sep = ""))
-  colnames(jobs.temp) <- names(jobs)
+  jobs.temp <- as.data.frame(t(matrix(links.temp, nrow = 3)))
+  colnames(jobs.temp) <- colnames(jobs)
+  jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.temp, '">', jobs.temp$`University/Company`, '</a>', sep = "")
   
   newListings <- matchRows(jobs.temp, jobs.stored)
   jobs <- rbind.data.frame(newListings, jobs)
