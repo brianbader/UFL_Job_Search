@@ -6,7 +6,7 @@ usePackage <- function(p) {
   sapply(p, require, character.only = TRUE)
 }
 
-packageList <- c("rvest")
+packageList <- c("rvest", "DT")
 
 usePackage(packageList)
 
