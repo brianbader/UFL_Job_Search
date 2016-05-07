@@ -16,6 +16,9 @@ shinyServer(function(input, output) {
     
     pagenums <- as.numeric(pagenums)[!is.na(as.numeric(pagenums))]
     
+    withProgress(message = 'Loading...', detail = paste("page ", 1, " / ", max(pagenums)), 
+                 min = 0, max = 1, value = 1 / max(pagenums), {
+    
     # Get main page URLs
     urls.main <- main.page %>%
       html_nodes(".joblist a") %>%
@@ -31,8 +34,6 @@ shinyServer(function(input, output) {
     colnames(jobs) <- c("University/Company", "Position Title", "Date")
     jobs$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.main, 
                                        '" target="_blank">', jobs$`University/Company`, '</a>', sep = '')
-    
-    withProgress(message = 'Loading...', value = 0, {
     
     for(i in 2:max(pagenums)) {
       
