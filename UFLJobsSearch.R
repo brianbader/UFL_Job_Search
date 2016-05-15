@@ -3,7 +3,7 @@ usePackage <- function(p) {
   if(length(newPackages))
     install.packages(newPackages, dependencies = TRUE)
   cat("Packages successfully loaded:\n")
-  sapply(p, require, character.only = TRUE)
+  sapply(p, require, character.only = TRUE, quietly = TRUE)
 }
 
 packageList <- c("rvest", "DT")
@@ -56,5 +56,7 @@ for(i in 2:max(pagenums)) {
   jobs <- rbind.data.frame(jobs, jobs.temp)
 
 }
+
+jobs$Date <- as.Date(jobs$Date, format = "%m/%d/%Y")
 
 datatable(jobs, escape = FALSE)
