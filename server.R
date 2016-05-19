@@ -6,6 +6,9 @@ library(DT)
 
 shinyServer(function(input, output) {
   
+  withProgress(message = 'Loading...', detail = paste("Checking main page"), 
+               min = 0, max = 1, value = 1 / 21, {
+  
   ## Function to find rows in dataframe 1 not in dataframe 2
   matchRows <- function(x.1, x.2, ...) {
     x.1p <- do.call("paste", x.1)
@@ -34,6 +37,8 @@ shinyServer(function(input, output) {
     html_text()
   
   pagenums <- as.numeric(pagenums)[!is.na(as.numeric(pagenums))]
+  
+  })
   
   withProgress(message = 'Loading...', detail = paste("page ", 1, " / ", max(pagenums)), 
                min = 0, max = 1, value = 1 / max(pagenums), {
