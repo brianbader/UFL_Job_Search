@@ -6,8 +6,6 @@ library(DT)
 
 shinyServer(function(input, output) {
   
-  withProgress(message = 'Loading...', detail = paste("Checking main page"), 
-               min = 0, max = 1, value = 1 / 21, {
   
   ## Function to find rows in dataframe 1 not in dataframe 2
   matchRows <- function(x.1, x.2, ...) {
@@ -27,6 +25,13 @@ shinyServer(function(input, output) {
     gs_read(ws = "UFLjobs")
   
   jobs.stored$Date <- as.Date(jobs.stored$Date, format = "%m/%d/%Y")
+  jobs <- jobs.stored
+  
+  ## If update button is clicked, check for new jobs
+  observeEvent(input$refresh, {
+  
+  withProgress(message = 'Loading...', detail = paste("Checking main page"), 
+               min = 0, max = 1, value = 1 / 21, {
   
   ## Check against main page first
   main.page <- read_html("http://www.stat.ufl.edu/jobs/")
@@ -69,8 +74,6 @@ shinyServer(function(input, output) {
                    jobs <- rbind.data.frame(newListings, jobs.stored)
                    gs_add_row(gap, ws = "UFLjobs",
                               input = newListings)
-                 } else {
-                   jobs <- jobs.stored
                  }
                  
                  i <- 2
@@ -113,13 +116,15 @@ shinyServer(function(input, output) {
                    i <- i + 1
                  }
                  
-                 jobs <- jobs[!duplicated(jobs),]
-                 jobs <- jobs[rev(order(jobs$Date)),]
-                 
                })
   
+  })
+                 
+                 jobs <- jobs[!duplicated(jobs),]
+                 jobs <- jobs[rev(order(jobs$Date)),]
+  
   output$mytable <- renderDataTable({
-    datatable(jobs, escape = FALSE)
+    datatable(jobs, escape = FALSE, rownames = FALSE)
   }, options = list(orderClasses = TRUE))
   
 })

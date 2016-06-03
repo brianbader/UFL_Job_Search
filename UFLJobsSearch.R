@@ -10,7 +10,7 @@ packageList <- c("rvest", "DT")
 
 usePackage(packageList)
 
-main.page <- html("http://www.stat.ufl.edu/jobs/")
+main.page <- read_html("http://www.stat.ufl.edu/jobs/")
 
 ## Get page numbers
 pagenums <- main.page %>%
@@ -37,7 +37,7 @@ jobs$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', url
 
 for(i in 2:max(pagenums)) {
 
-  temp.page <- html(paste("http://www.stat.ufl.edu/jobs/?page=", i, sep = ""))
+  temp.page <- read_html(paste("http://www.stat.ufl.edu/jobs/?page=", i, sep = ""))
 
   # Get page URLs
   urls.temp <- temp.page %>%
