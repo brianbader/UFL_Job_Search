@@ -6,6 +6,8 @@ library(DT)
 
 shinyServer(function(input, output) {
   
+  withProgress(message = 'Loading...', detail = paste("Checking main page"), 
+               min = 0, max = 1, value = 1 / 21, {
   
   ## Function to find rows in dataframe 1 not in dataframe 2
   matchRows <- function(x.1, x.2, ...) {
@@ -24,14 +26,7 @@ shinyServer(function(input, output) {
   jobs.stored <- gap %>% 
     gs_read(ws = "UFLjobs")
   
-  jobs.stored$Date <- as.Date(jobs.stored$Date, format = "%m/%d/%Y")
-  jobs <- jobs.stored
-  
-  ## If update button is clicked, check for new jobs
-  observeEvent(input$refresh, {
-  
-  withProgress(message = 'Loading...', detail = paste("Checking main page"), 
-               min = 0, max = 1, value = 1 / 21, {
+  #jobs.stored$Date <- as.Date(jobs.stored$Date, format = "%m/%d/%Y")
   
   ## Check against main page first
   main.page <- read_html("http://www.stat.ufl.edu/jobs/")
@@ -64,7 +59,7 @@ shinyServer(function(input, output) {
                  jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.main, 
                                                          '" target="_blank">', jobs.temp$`University/Company`, '</a>', sep = "")
                  jobs.temp$`Position Title` <- as.character(jobs.temp$`Position Title`)
-                 jobs.temp$Date <- as.Date(jobs.temp$Date, format = "%m/%d/%Y")
+                 #jobs.temp$Date <- as.Date(jobs.temp$Date, format = "%m/%d/%Y")
                  
                  ## Check if there are any new listings
                  newListings <- matchRows(jobs.temp, jobs.stored)
@@ -74,6 +69,8 @@ shinyServer(function(input, output) {
                    jobs <- rbind.data.frame(newListings, jobs.stored)
                    gs_add_row(gap, ws = "UFLjobs",
                               input = newListings)
+                 } else {
+                   jobs <- jobs.stored
                  }
                  
                  i <- 2
@@ -96,7 +93,7 @@ shinyServer(function(input, output) {
                    jobs.temp$`University/Company` <- paste('<a href="http://www.stat.ufl.edu/jobs/', urls.temp, 
                                                            '" target="_blank">', jobs.temp$`University/Company`, '</a>', sep = "")
                    jobs.temp$`Position Title` <- as.character(jobs.temp$`Position Title`)
-                   jobs.temp$Date <- as.Date(jobs.temp$Date, format = "%m/%d/%Y")
+                   #jobs.temp$Date <- as.Date(jobs.temp$Date, format = "%m/%d/%Y")
                    
                    newListings <- matchRows(jobs.temp, jobs.stored)
                    check <- matchRows(cbind.data.frame(substr(jobs.temp$`University/Company`, 50, 53), jobs.temp$Date), 
@@ -116,12 +113,11 @@ shinyServer(function(input, output) {
                    i <- i + 1
                  }
                  
-               })
-  
-  })
-                 
+                 jobs$Date <- as.Date(jobs$Date, format = "%m/%d/%Y")
                  jobs <- jobs[!duplicated(jobs),]
                  jobs <- jobs[rev(order(jobs$Date)),]
+                 
+               })
   
   output$mytable <- renderDataTable({
     datatable(jobs, escape = FALSE, rownames = FALSE)
